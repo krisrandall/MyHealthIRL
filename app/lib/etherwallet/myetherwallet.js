@@ -269,4 +269,4 @@ Wallet.getWalletFromPrivKeyFile = function(strjson, password) {
 	else
 	throw globalFuncs.errorMsgs[2];
 }
-module.exports = Wallet;
+//module.exports = Wallet;
