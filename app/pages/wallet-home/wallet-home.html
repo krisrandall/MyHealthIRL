@@ -2,13 +2,24 @@
     <ion-title>
         Ethereum Wallets
     </ion-title>
-    <ion-buttons end>
-        <button (click)="addItem()"><icon add></icon>Add Item</button>
-    </ion-buttons>
 </ion-navbar>
  
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let item of items" (click)="viewItem(item)">{{item.title}}</ion-item>
-  </ion-list>
+
+	<ion-list *ngIf="!items.length<1">
+		<ion-item *ngFor="let item of items" (click)="viewItem(item)">{{item.title}}</ion-item>
+	</ion-list>
+	<div *ngIf="items.length<1">
+		You do not currently have any wallets setup<br/>
+		Create or Import a wallet now<br/>
+	</div>
+
+
+	<p class="spacer"></p>
+
+	<button (click)="addItem()" primary style="width: 100%;">Create New Wallet</button> 
+
+	<button (click)="addItem()" secondary style="width: 100%;">Import Wallet</button> 
+
 </ion-content>
+

@@ -14,9 +14,7 @@ ethUtil.crypto = require('crypto'); // to get the crypto lib too
 6. and then use http://browserify.org/ to get all the dependencies
    "browserify etherWalletWrapper.js -o etherWalletWrapperBrowserified.js"
 
-NB: also had to browserify myetherwallet.js
-
-NB2: add a line to make ethUtil accessible in the global scope 
+  Add a line to make ethUtil accessible in the global scope 
    (I bet there is a better way to do this - but I don't currently know it) :
 */
 window.ethUtil = ethUtil;
