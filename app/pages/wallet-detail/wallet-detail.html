@@ -1,13 +1,23 @@
 <ion-navbar *navbar>
   <ion-title>
-    {{title}}
+    Wallet
   </ion-title>
 </ion-navbar>
  
 <ion-content>
+  
   <ion-card>
     <ion-card-content>
-      {{description}}
+    	<b>Address:</b><br/>
+    	{{title}}
     </ion-card-content>
   </ion-card>
+
+  <img src="{{icon}}" class="walletIcon"/> 
+  <img src="{{qrcode}}" class="qrCode" />
+
+  <div class="buttons">
+  	<button (click)="EXPORTNAVFUNC()" secondary style="width: 100%;">Export Wallet</button> 
+  </div>
+
 </ion-content>

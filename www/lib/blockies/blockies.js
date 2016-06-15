@@ -105,5 +105,4 @@
 	}
 
 	window.blockies = {create: createIcon};
-
 })();
