@@ -7,8 +7,8 @@ import {WalletHome} from '../wallet-home/wallet-home';
  
 export class WalletCreate {
  
-    private title = "";
-    private description = "";
+    private address = "";
+    private passPhrase = "";
 
     private walletHome;
 
@@ -18,13 +18,19 @@ export class WalletCreate {
 
     saveItem() {
 
-        var newItem = {
-          title: this.title,
-          description: this.description
-        };
+        // Create the Wallet !!
 
-		this.walletHome.saveItem(newItem);
-		this.nav.pop();
+        if (this.passPhrase>'') {
+
+            let newItem = {
+                address: "this.address"
+            };
+
+            this.walletHome.saveItem(newItem);
+            this.nav.pop();   
+
+        }
+
     }
  
     close(){

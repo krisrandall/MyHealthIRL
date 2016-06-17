@@ -7,7 +7,7 @@
 <ion-content>
 
 	<ion-list *ngIf="!items.length<1">
-		<ion-item *ngFor="let item of items" (click)="viewItem(item)">{{item.title}}</ion-item>
+		<ion-item *ngFor="let item of items" (click)="viewItem(item)">{{item.address}}</ion-item>
 	</ion-list>
 	<ion-card *ngIf="items.length<1">
     	<ion-card-content>
