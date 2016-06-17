@@ -14,7 +14,7 @@
   </ion-card>
 
   <img src="{{icon}}" class="walletIcon"/> 
-  <img src="{{qrcode}}" class="qrCode" />
+  <qr-code [data]="qrdata"></qr-code>
 
   <div class="buttons">
   	<button (click)="EXPORTNAVFUNC()" secondary style="width: 100%;">Export Wallet</button> 

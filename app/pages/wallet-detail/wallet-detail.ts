@@ -12,21 +12,17 @@ export class WalletDetail {
 	private title;
 	private description;
 	private icon;
-	private qrcode;
+	private qrdata;
 
 	constructor(private navParams: NavParams) {
 
 		let address = this.navParams.get('item').title.toLowerCase();
-
 		let walletIcon = blockies.create( { 'seed': address, size: 8, scale: 16 } );
-
-		console.log(walletIcon);
 
 		this.title = address;
 		this.description = this.navParams.get('item').description;
-
 		this.icon = walletIcon.toDataURL();
-		this.qrcode = '';
+		this.qrdata = address;
 
 	}
 
