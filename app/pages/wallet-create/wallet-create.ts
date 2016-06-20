@@ -1,6 +1,8 @@
 import {Page, NavParams, NavController} from 'ionic-angular';
 import {WalletHome} from '../wallet-home/wallet-home';
 import {Autofocus} from '../../tsLib/autofocus';
+import {WalletDetail} from '../wallet-detail/wallet-detail';
+
 
 
 // Bring in the 3rd party etherwallet Javascript library
@@ -42,7 +44,7 @@ export class WalletCreate {
 
             // Create the Wallet !!
             var wallet = Wallet.generate(false);
-            let newWalletItem = {
+            let item = {
                 wallet: wallet,
                 address: wallet.getAddressString(),
                 blob: this.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
@@ -50,13 +52,14 @@ export class WalletCreate {
                             wallet.toV3(this.passPhrase, {n: 1024}))
             };
 
-            this.walletHome.saveItem(newWalletItem);
+            this.walletHome.saveItem(item);
             this.nav.pop();
+            this.nav.push(WalletDetail, { item });
 
         }
 
     }
- 
+
     close(){
         this.nav.pop();
     }
