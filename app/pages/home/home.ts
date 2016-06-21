@@ -14,11 +14,14 @@ export class HomePage {
   }
 
   /*
-    pushPage(){
-      this._navController.push(SomeImportedPage, { userId: "12345"});
-    }
+  pushPage(){
+    this._navController.push(SomeImportedPage, { userId: "12345"});
+  }
   */
 
+  showWalletHome = function() {
+    this._navController.push(WalletHome);
+  }
 
 
 }
