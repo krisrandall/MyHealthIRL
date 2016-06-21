@@ -49,7 +49,8 @@ export class WalletCreate {
                 address: wallet.getAddressString(),
                 blob: this.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
                 blobEnc: this.getBlob("text/json;charset=UTF-8", 
-                            wallet.toV3(this.passPhrase, {n: 1024}))
+                            wallet.toV3(this.passPhrase, {n: 1024})),
+                walletV3: wallet.toV3(this.passPhrase, {n: 1024})
             };
 
             this.walletHome.saveItem(item);

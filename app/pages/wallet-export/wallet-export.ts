@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavParams} from 'ionic-angular';
 
 /*
   Generated class for the WalletExportPage page.
@@ -11,5 +11,16 @@ import {NavController} from 'ionic-angular';
   templateUrl: 'build/pages/wallet-export/wallet-export.html',
 })
 export class WalletExportPage {
-  constructor(public nav: NavController) {}
+
+	private keyStoreFileContents;
+
+	constructor(private navParams: NavParams) {
+
+		console.log('HERE!!', navParams);
+
+		let keyStoreFileContents = JSON.stringify(this.navParams.get('item').walletV3);
+		this.keyStoreFileContents = keyStoreFileContents;
+
+	}
+
 }
