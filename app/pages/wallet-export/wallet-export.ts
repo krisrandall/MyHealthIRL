@@ -1,23 +1,33 @@
 import {Component} from '@angular/core';
 import {NavParams} from 'ionic-angular';
+import {DomSanitizationService} from '@angular/platform-browser';
 
-/*
-  Generated class for the WalletExportPage page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
-  templateUrl: 'build/pages/wallet-export/wallet-export.html',
+	 templateUrl: 'build/pages/wallet-export/wallet-export.html',
 })
 export class WalletExportPage {
 
 	private keyStoreFileContents;
+	private blobEnc;
+	private encFileName;
 
-	constructor(private navParams: NavParams) {
 
-		let keyStoreFileContents = JSON.stringify(this.navParams.get('item').walletV3);
+	sanitizedBlobEncUrl(){
+		// this seems stupid to me, but without it Angular2 adds "unsafe:" to my blob url
+		return this.sanitizer.bypassSecurityTrustUrl(this.blobEnc);
+	}
+
+	constructor(private navParams: NavParams, private sanitizer:DomSanitizationService) {
+		let walletItem = this.navParams.get('item');
+		let keyStoreFileContents = JSON.stringify(walletItem.walletV3);
+		
+		console.log(walletItem);
+
+				
 		this.keyStoreFileContents = keyStoreFileContents;
+		this.encFileName = walletItem.encFileName;
+		this.blobEnc = walletItem.blobEnc;
 
 	}
 

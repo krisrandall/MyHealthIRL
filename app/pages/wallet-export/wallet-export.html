@@ -12,13 +12,13 @@
  
 	<ion-card>
 		<ion-card-content>
-			The ability to export your wallets is coming soon ...
+			Click on the Keystore JSON data below to download wallet file
 		</ion-card-content>
 	</ion-card>
 
 	<ion-card>
 		<ion-card-content>
-			{{keyStoreFileContents}}
+			<a class="btn btn-info btn-block" [href]="sanitizedBlobEncUrl()" download="{{encFileName}}"> {{keyStoreFileContents}} </a>
 		</ion-card-content>
 	</ion-card>
 

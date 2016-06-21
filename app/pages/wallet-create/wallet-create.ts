@@ -1,6 +1,5 @@
 import {Page, NavParams, NavController} from 'ionic-angular';
 import {WalletHome} from '../wallet-home/wallet-home';
-import {Autofocus} from '../../tsLib/autofocus';
 import {WalletDetail} from '../wallet-detail/wallet-detail';
 
 
@@ -50,7 +49,9 @@ export class WalletCreate {
                 blob: this.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
                 blobEnc: this.getBlob("text/json;charset=UTF-8", 
                             wallet.toV3(this.passPhrase, {n: 1024})),
-                walletV3: wallet.toV3(this.passPhrase, {n: 1024})
+                walletV3: wallet.toV3(this.passPhrase, {n: 1024}),
+                createdOn: new Date(),
+                encFileName: wallet.getV3Filename(new Date())
             };
 
             this.walletHome.saveItem(item);
