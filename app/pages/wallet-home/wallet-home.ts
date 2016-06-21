@@ -1,8 +1,9 @@
-
+import {Component} from '@angular/core';
 import {Page, Modal, NavController} from 'ionic-angular';
 import {WalletCreate} from '../wallet-create/wallet-create';
 import {WalletDetail} from '../wallet-detail/wallet-detail';
 import {WalletImportPage} from '../wallet-import/wallet-import';
+import {Data} from '../../providers/data/data';
 
 
 @Page({
@@ -10,21 +11,32 @@ import {WalletImportPage} from '../wallet-import/wallet-import';
 })
  
 export class WalletHome {
- 
+
   private items = [];
- 
-  constructor(private nav: NavController) {
+
+  constructor(private nav: NavController, private dataService: Data) {
+
+    this.dataService.getData().then((todos) => {
+
+      if (todos){
+        this.items = JSON.parse(todos); 
+      }
+
+    });
+
   }
+
 
   addItem(){
     this.nav.push(WalletCreate, { walletHome: this } ); // it calls WalletHome.saveItem
   }
- 
+
   saveItem(item){
     this.items.push(item);
+    this.dataService.save(this.items);
   }
- 
-  viewItem(item){
+
+  viewItem(item) {
     this.nav.push(WalletDetail, { item });
   }
 
