@@ -55,7 +55,7 @@ export class WalletCreate {
 
             this.walletHome.saveItem(item);
             this.nav.pop();
-            this.nav.push(WalletDetail, { item });
+            /* This is desirable - but causes all kinds of problems with the back button thereafter : this.nav.push(WalletDetail, { item }); */
 
         }
 

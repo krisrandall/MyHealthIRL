@@ -2,7 +2,7 @@
 import {Page, Modal, NavController} from 'ionic-angular';
 import {WalletCreate} from '../wallet-create/wallet-create';
 import {WalletDetail} from '../wallet-detail/wallet-detail';
-
+import {WalletImportPage} from '../wallet-import/wallet-import';
 
 
 @Page({
@@ -26,6 +26,10 @@ export class WalletHome {
  
   viewItem(item){
     this.nav.push(WalletDetail, { item });
+  }
+
+  showImportPage() {
+    this.nav.push(WalletImportPage, { });
   }
 
 }

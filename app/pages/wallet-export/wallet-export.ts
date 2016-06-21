@@ -16,8 +16,6 @@ export class WalletExportPage {
 
 	constructor(private navParams: NavParams) {
 
-		console.log('HERE!!', navParams);
-
 		let keyStoreFileContents = JSON.stringify(this.navParams.get('item').walletV3);
 		this.keyStoreFileContents = keyStoreFileContents;
 
