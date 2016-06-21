@@ -62,3 +62,22 @@ ion-content {
 qr-code::shadow img {
     width: 48%;
 }
+
+
+// this really belongs in wallet-create.scss -- but that doesn't seem to get included into this -- which seems stupid to me
+.passwordToggle {
+    width: 20px;
+    height: 20px;
+    margin-left: 6px;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: middle;
+    background: url(../../img/icons/icon-eye.svg);
+    position: absolute;
+    right: 5px;
+    top: 35px;
+}
+.passwordToggle.password {
+   background: url(../../img/icons/icon-eye-closed.svg); 
+}
+

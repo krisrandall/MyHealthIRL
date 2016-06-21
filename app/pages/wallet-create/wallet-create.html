@@ -8,15 +8,15 @@
 </ion-toolbar>
  
 <ion-content>
-    <ion-list>
- 
-      <ion-item>
+
+
+    <ion-item>
         <ion-label floating>Enter a strong pass phrase</ion-label>
-        <ion-input type="text" [(ngModel)]="passPhrase" required autofocus></ion-input>
-      </ion-item>
- 
-    </ion-list>
- 
+        <ion-input [type]="viewMode" [(ngModel)]="passPhrase" required autofocus></ion-input>
+    </ion-item>
+    <span class="passwordToggle {{viewMode}}" (click)="togglePassView()"></span>   
+
+
     <button (click)="saveItem()" secondary style="width: 100%;">Create Wallet</button> 
- 
+
 </ion-content>

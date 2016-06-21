@@ -21,6 +21,7 @@ export class WalletCreate {
     private passPhrase = "";
 
     private walletHome;
+    private viewMode = "text";
 
 	constructor(private navParams: NavParams, private nav: NavController) {
 		this.walletHome = this.navParams.get('walletHome');
@@ -37,7 +38,6 @@ export class WalletCreate {
 
 
     saveItem() {
-
 
         if (this.passPhrase>'') {
 
@@ -62,7 +62,16 @@ export class WalletCreate {
 
     }
 
-    close(){
+    togglePassView() {
+        if (this.viewMode == 'text') {
+            this.viewMode = 'password';
+        } else {
+            this.viewMode = 'text';
+        }
+    }
+
+
+    close() {
         this.nav.pop();
     }
  
