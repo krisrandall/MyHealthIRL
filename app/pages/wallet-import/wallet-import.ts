@@ -1,15 +1,28 @@
 import {Component} from '@angular/core';
 import {NavController} from 'ionic-angular';
 
-/*
-  Generated class for the WalletImportPage page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
-  templateUrl: 'build/pages/wallet-import/wallet-import.html',
+	templateUrl: 'build/pages/wallet-import/wallet-import.html',
 })
 export class WalletImportPage {
-  constructor(public nav: NavController) {}
+	constructor(public nav: NavController, private window: Window) {
+
+
+		var global = {
+			HandlePopupResult : {
+				Choosen : function(results) {
+
+					alert('here are the results!');
+					alert(JSON.stringify(results));
+				}
+			}
+		}
+		window.Global = global;
+
+		window.open('lib/kloudless/kloudless.choose.wrapper.html', '_blank');
+
+	}
+
+
 }

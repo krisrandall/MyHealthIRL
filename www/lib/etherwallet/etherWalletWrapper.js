@@ -14,7 +14,8 @@ var Buffer = require('buffer').Buffer;
    so that we have a local (client code) node_modules dir
 5. get this by running "npm install ethereumjs-util"
 6. and then use http://browserify.org/ to get all the dependencies
-   "browserify etherWalletWrapper.js -o etherWalletWrapperBrowserified.js"
+   " browserify etherWalletWrapper.js -o etherWalletWrapperBrowserified.js; 
+     cp etherWalletWrapperBrowserified.js /projects/angular2/MyHealthIRL/www/lib/etherwallet "
 
   Add a line to make ethUtil accessible in the global scope 
    (I bet there is a better way to do this - but I don't currently know it) :
@@ -23,6 +24,29 @@ window.ethUtil = ethUtil;
 window.Buffer = Buffer;
 
 /* and more come up as we go along */
+
+
+
+// Maps for number <-> hex string conversion
+var _byteToHex = [];
+var _hexToByte = {};
+for (var i = 0; i < 256; i++) {
+  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+  _hexToByte[_byteToHex[i]] = i;
+}
+
+// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
+function unparse(buf, offset) {
+  var i = offset || 0, bth = _byteToHex;
+  return  bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
+}
 
 // See https://github.com/broofa/node-uuid for API details
 function v4(options, buf, offset) {
@@ -51,4 +75,6 @@ function v4(options, buf, offset) {
   return buf || unparse(rnds);
 }
 
-window.ethUtil.v4 = v4;
+window.ethUtil.uuid = {};
+window.ethUtil.uuid.v4 = v4;
+
