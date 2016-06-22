@@ -1,0 +1,65 @@
+<!-- DOESNT WORK TO OPEN THIS IN THE BROWSER SO ATTEMPTING A HOSTED SOLUTION -->
+
+<!-- This exists so that it can be opened in a window.open call -->
+<!-- NOTE - in the parent you MUST have Global.HandlePopUpResult.Choosen function defined ! -->
+
+
+<head>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="msapplication-tap-highlight" content="no">
+
+
+	<!-- this is for the kloudless file storage engine and UI -->
+	<script   src="https://code.jquery.com/jquery-3.0.0.js"   integrity="sha256-jrPLZ+8vDxt2FnE1zvZXCkCcebI/C8Dt5xyaQBjxQIo="   crossorigin="anonymous"></script>
+	<script src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
+
+
+	<script>
+	// File Explorer with jQuery
+	// For a version without jQuery, and with all options and event handlers, see here: http://jsfiddle.net/pseudonumos/ax4wuxkp/
+	$(document).ready(function() {
+
+		var explorer = window.Kloudless.explorer({
+		    app_id: 'XiW25w8Rchrozdp7JM2O4socjr_kDsaErEZGuvcpZDBu5me9',
+		    multiselect: false,
+		    computer: true,
+		    services : [
+					// see the services var in https://github.com/Kloudless/file-explorer/blob/master/src/explorer/js/config.js 
+					// These 4 are popular and fit tidly on the screen :
+					'dropbox',
+					'gdrive',
+					//'box',
+					'evernote',
+					//'skydrive',
+					//'sugarsync',
+					//'sharefile',
+					//'egnyte',
+					'sharepoint',
+					//'onedrivebiz',
+					//'hubspot',
+					//'salesforce',
+					//'smb',
+					//'cmis',
+					//'alfresco',
+					//'alfresco_cloud',
+					//'jive',
+					//'webdav',
+					//'cq5',
+	           ]
+		});
+
+		explorer.on('success', function(files) {
+		    window.opener.Global.HandlePopupResult.Choosen('success', files);
+		    window.close();
+		});
+
+
+		explorer.choose();
+
+	});
+
+	</script>
+
+</head>

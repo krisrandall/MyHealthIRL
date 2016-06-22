@@ -8,7 +8,6 @@ import {NavController} from 'ionic-angular';
 export class WalletImportPage {
 	constructor(public nav: NavController) {
 
-		alert('here!');
 		var global = {
 			HandlePopupResult : {
 				Choosen : function(results) {
@@ -20,7 +19,7 @@ export class WalletImportPage {
 		}
 		window.Global = global;
 
-		window.open('./lib/kloudless/kloudless.choose.wrapper.html', '_blank');
+		window.open('http://cocreations.com.au/sicoor/api/kloudless.choose.wrapper.html', '_blank');
 
 	}
 
