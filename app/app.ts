@@ -3,7 +3,7 @@ import {Platform, ionicBootstrap} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {HomePage} from './pages/home/home';
 import {Data} from './providers/data/data';
-import {provide} from 'angular2/core';
+import {provide} from '@angular/core';
 
 @Component({
 	template: '<ion-nav [root]="rootPage"></ion-nav>'
@@ -17,5 +17,6 @@ export class MyApp {
     });
   }
 }
- 
+
+
 ionicBootstrap(MyApp, [Data], [provide(Window, { useValue: window })]);

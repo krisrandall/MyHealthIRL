@@ -3,12 +3,12 @@ import {NavController} from 'ionic-angular';
 
 
 @Component({
-	templateUrl: 'build/pages/wallet-import/wallet-import.html',
+	templateUrl: 'build/pages/wallet-import/wallet-import.html'
 })
 export class WalletImportPage {
-	constructor(public nav: NavController, private window: Window) {
+	constructor(public nav: NavController) {
 
-
+		alert('here!');
 		var global = {
 			HandlePopupResult : {
 				Choosen : function(results) {
@@ -20,7 +20,7 @@ export class WalletImportPage {
 		}
 		window.Global = global;
 
-		window.open('lib/kloudless/kloudless.choose.wrapper.html', '_blank');
+		window.open('./lib/kloudless/kloudless.choose.wrapper.html', '_blank');
 
 	}
 
