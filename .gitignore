@@ -1,9 +1,10 @@
 node_modules/
 www/build/
 platforms/
-plugins/
 .DS_Store
 
 resources/android
 resources/ios
 
+plugins/
+!plugins/*.json
