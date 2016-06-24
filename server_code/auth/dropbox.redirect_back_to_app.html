@@ -2,14 +2,30 @@
 	<head>
 		<script>
 
-			var goTo = "myhealth://"+window.location.hash.substr(1);
-			document.location = goTo;
-			// Expect : #access_token=ABCDEFG&token_type=bearer&account_id=dbid%3AAAH4f99T0taONIb-OurWxbNQ6ywGRopQngc&uid=12345&state=[STATE]
-			console.log('Navigating to '+goTo);
+
+			function getToken(tokenName) {
+				tokenName = tokenName+'=';
+				var everything = window.location.hash;
+				var tokenPlus = everything.substr(everything.indexOf(tokenName));
+				var access_token = tokenPlus.substring(tokenName.length, tokenPlus.indexOf('&'));
+				return access_token;	
+			}
+
+
+
+			// actually I don't really redirect back .. I simply put the values here for the calling code to fetch
+			window.onload = function () {
+
+				// Expect : #access_token=ABCDEFG&token_type=bearer&account_id=dbid%3AAAH4f99T0taONIb-OurWxbNQ6ywGRopQngc&uid=12345&state=[STATE]
+
+				document.getElementById('access_token').value = getToken('access_token');
+
+			}
 
 		</script>
 	</head>
 	<body>
 		...
+		<input type="hidden" id="access_token"></input>
 	</body>
 </html>
