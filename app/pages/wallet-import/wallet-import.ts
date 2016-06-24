@@ -20,7 +20,7 @@ export class WalletImportPage {
 			"dropbox": {
 				"base_url": "https://www.dropbox.com/1/oauth2/authorize?response_type=token&state=whatever",
 				"client_id": "7o1hlldcmb28dk5",
-				"redirect_uri": "https://take5app.co/sicoor/dropbox.redirect_back_to_app.html"
+				"redirect_uri": "https://www.dropbox.com/1/oauth2/redirect_receiver"
 			}
 		}
 		this.fileStorageAuthUrl = filesSource.dropbox.base_url 
@@ -35,9 +35,7 @@ export class WalletImportPage {
 		// https://github.com/moderna/cordova-plugin-cache
 		if (window.cache) {
 			window.cache.clear(function() {
-				// NB : needs to be in an InAppBrowser in order for the redirect back to the app
-				// (via custom URL scheme) to work 
-				window.open(this.fileStorageAuthUrl, "_blank");
+				window.location = this.fileStorageAuthUrl;
 			}.call(this));			
 		} else {
 			console.log('No window.cache pluggin -- you must be running in the browswer, or have not installed plugins !');
