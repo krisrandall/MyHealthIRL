@@ -6,5 +6,5 @@ platforms/
 resources/android
 resources/ios
 
-plugins/
-!plugins/*.json
+/plugins/
+!/plugins/*.json
