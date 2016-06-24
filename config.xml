@@ -82,6 +82,11 @@
   <plugin name="ionic-plugin-keyboard" spec="~2.2.0"/>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 
+
+  <allow-navigation href="http://cocreations.com.au/*" />
+  <allow-navigation href="https://cocreations.com.au/*" />  
+  <allow-navigation href="http://www.cocreations.com.au/*" />
+  <allow-navigation href="https://www.cocreations.com.au/*" />
   <allow-navigation href="https://api.kloudless.com/*" />
   <allow-navigation href="https://accounts.google.com/*" />
   <allow-navigation href="https://api.dropboxapi.com/*" />

@@ -11,34 +11,12 @@
 <ion-content padding class="wallet-import">
   
 
-	<ion-card>
-    	<ion-card-content>
-	    	The ability to add your existing wallets is coming soon ...
-    	</ion-card-content>
-  	</ion-card>
-
-<h1>Welcome to the Kloudless JS File Explorer</h1>
-
-<hr />
-
-<h2>Documentation</h2>
-
-<p>Documentation can be found <a href="https://developers.kloudless.com/docs#ui-tools" target="_blank">here</a>
-</p>
-<p>For a version without jQuery, and with all options and event handlers, see
-    <a href="http://jsfiddle.net/pseudonumos/ax4wuxkp/embedded/" target="_blank">here</a>
-</p>
-
-<h2>Example</h2>
-
-<button id="chooser">Choose a file</button>
-
-<button id="saver">Save a file</button>
-
-<h3>File information</h3>
-
-<div id="file-info"><pre></pre></div>
+  <ion-card>
+    <ion-card-content>
+      <p>Connecting to remote file storage ... </p>
+      <button type="secondary" (click)="openFileChooser()" *ngIf="timeHasPassed==true">Retry</button>
+    </ion-card-content>
+  </ion-card>
 
 
-<a href="#" (click)="my_func()" target="_blank">Try this link! (window.open)(target="_blank")(external function - in ts file)(and with "_blank" as the 2nd param - that makes it work !!)</a>
 </ion-content>
