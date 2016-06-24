@@ -17,6 +17,4 @@ export class MyApp {
   }
 }
 
-alert(window.location.origin);
-
 ionicBootstrap(MyApp, [Data]);

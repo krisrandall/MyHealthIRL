@@ -52,17 +52,9 @@
 		});
 
 		explorer.on('success', function(files) {
-		    
-alert('WTF!?!?!');
-		    window.close();
-		    
-			console.log(JSON.stringify(window.opener));
-			console.log(' ---------- ');
-			console.log(JSON.stringify(window));
-
-			alert('HERE I AM!!');
 
 		    window.opener.Global.HandlePopupResult.Choosen('success', files);
+		    window.close();
 
 		});
 
