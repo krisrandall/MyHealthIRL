@@ -25,11 +25,17 @@
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
         },
+        "at.modalog.cordova.plugin.cache": {
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        },
         "cordova-plugin-customurlscheme": {
             "URL_SCHEME": "myhealth",
             "ANDROID_SCHEME": " ",
             "ANDROID_HOST": " ",
             "ANDROID_PATHPREFIX": "/",
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        },
+        "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
         }
     },

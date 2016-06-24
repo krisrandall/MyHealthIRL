@@ -11,5 +11,41 @@ import {NavController} from 'ionic-angular';
   templateUrl: 'build/pages/wallet-import/wallet-import.html',
 })
 export class WalletImportPage {
-  constructor(public nav: NavController) {}
+
+	private fileStorageAuthUrl;
+
+	constructor(public nav: NavController) {
+
+		var filesSource = {
+			"dropbox": {
+				"base_url": "https://www.dropbox.com/1/oauth2/authorize?response_type=token&state=whatever",
+				"client_id": "7o1hlldcmb28dk5",
+				"redirect_uri": "https://take5app.co/sicoor/dropbox.redirect_back_to_app.html"
+			}
+		}
+		this.fileStorageAuthUrl = filesSource.dropbox.base_url 
+								+ "&client_id=" + filesSource.dropbox.client_id 
+								+ "&redirect_uri=" + filesSource.dropbox.redirect_uri;
+
+
+		/* TO DO : check state here - if we have a valid token then we don't need to auth ... */
+
+
+		// need to clear cache here 'cause caching seems to be happening, use this plugin :
+		// https://github.com/moderna/cordova-plugin-cache
+		if (window.cache) {
+			window.cache.clear(function() {
+				// NB : needs to be in an InAppBrowser in order for the redirect back to the app
+				// (via custom URL scheme) to work 
+				window.open(this.fileStorageAuthUrl, "_blank");
+			}.call(this));			
+		} else {
+			console.log('No window.cache pluggin -- you must be running in the browswer, or have not installed plugins !');
+			window.location = this.fileStorageAuthUrl;
+		}
+
+
+
+
+	}
 }

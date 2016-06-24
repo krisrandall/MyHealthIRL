@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<script>
+
+			var goTo = "myhealth://"+window.location.hash.substr(1);
+			document.location = goTo;
+			// Expect : #access_token=ABCDEFG&token_type=bearer&account_id=dbid%3AAAH4f99T0taONIb-OurWxbNQ6ywGRopQngc&uid=12345&state=[STATE]
+			console.log('Navigating to '+goTo);
+
+		</script>
+	</head>
+	<body>
+		...
+	</body>
+</html>
