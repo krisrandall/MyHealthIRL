@@ -28,51 +28,65 @@ export class WalletImportPage {
 								+ "&redirect_uri=" + filesSource.dropbox.redirect_uri;
 
 
-		/* TO DO : check state here - if we have a valid token then we don't need to auth ... */
 
+		this.dropboxGetToken(function(tok) {
+			alert('the token is : '+tok);
+		});
+
+
+	}
+
+
+	// this wrapper function means it works in-device or in-browser (without the cache plugin)
+	clearCache(callback) {
 		// need to clear cache here 'cause caching seems to be happening, use this plugin :
 		// https://github.com/moderna/cordova-plugin-cache
 		if (window.cache) {
-			window.cache.clear(function() {
-
-				var win = window.open(this.fileStorageAuthUrl, "_blank", "_location=no");
-				
-				win.addEventListener('loadstop', function do_loadstop(e) {
-
-					// Start an interval
-					var loop = setInterval(function() {
-						// Execute JavaScript to check for the existence of a name in the
-						// child browser's localStorage.
-						win.executeScript(
-							{
-								code: "document.getElementById('access_token').value"
-							},
-							function(values) {
-
-								var access_token = values[0];
-
-								if (access_token) {
-
-									alert('the token is ' + access_token);
-									//alert('account id is ' + account_id);
-
-									clearInterval(loop);
-									win.close();
-
-								}
-							}
-						);
-					}, 400);
-				});
-
-				win.addEventListener('exit', function do_exit() { 
-
-				});
-
-			}.bind(this));
+			window.cache.clear(callback);
 		} else {
-			console.log('no cache so doing nothing !! -- this just here cause im in a hurry');
+			callback();
 		}
+	}
+
+
+	dropboxGetToken(callback) {
+
+		this.clearCache(function() {
+
+			var win = window.open(this.fileStorageAuthUrl, "_blank", "_location=no");
+			
+			win.addEventListener('loadstop', function do_loadstop(e) {
+
+				var loop;
+
+				// clean up the popup (and interval (set below)) after auth
+				function afterAuthFunc(values) {
+					var access_token = values[0];
+					if (access_token) {
+						callback(access_token);
+						clearInterval(loop);
+						win.close();
+					}
+				}
+
+				// keep checking the popup window until the access_token hidden field is set
+				loop = setInterval(function() {
+					// Execute JavaScript to check for the existence of a name in the
+					// child browser's localStorage.
+					win.executeScript(
+						{
+							code: "document.getElementById('access_token').value"
+						},
+						afterAuthFunc
+					);
+				}, 400);
+			
+			});
+
+			win.addEventListener('exit', function do_exit() { console.log('exit event happened from token code!'); });
+
+		}.bind(this));
 
 	}
+
 }
