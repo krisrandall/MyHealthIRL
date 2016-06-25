@@ -28,65 +28,94 @@ export class WalletImportPage {
 								+ "&redirect_uri=" + filesSource.dropbox.redirect_uri;
 
 
-
-		this.dropboxGetToken(function(tok) {
-			alert('the token is : '+tok);
-		});
+		this.clearCache().then(this.dropboxGetToken.bind(this))
+						 .then(this.dropboxListFiles.bind(this));
 
 
 	}
 
 
 	// this wrapper function means it works in-device or in-browser (without the cache plugin)
-	clearCache(callback) {
+	clearCache() {
 		// need to clear cache here 'cause caching seems to be happening, use this plugin :
 		// https://github.com/moderna/cordova-plugin-cache
-		if (window.cache) {
-			window.cache.clear(callback);
-		} else {
-			callback();
-		}
+
+		return new Promise(function(resolve, reject) {
+
+			if (window.cache) {
+				window.cache.clear( function() {
+					resolve('Cache Cleared!'); 
+				});
+			} else {
+				console.log('window.cache not available so cache not cleared at this time.');
+				resolve('window.cache not available!'); // not a 'reject', this is fine
+			}
+
+		});
+
+	
 	}
 
+	dropboxListFiles(token) {
+		alert('and, the token is :'+ token);
 
-	dropboxGetToken(callback) {
+	}
 
-		this.clearCache(function() {
+	dropboxGetToken() {
 
-			var win = window.open(this.fileStorageAuthUrl, "_blank", "_location=no");
+		var self = this;
+
+		return new Promise(function(resolve, reject) {
+
+			var win = window.open(self.fileStorageAuthUrl, "_blank", "location=no");
 			
-			win.addEventListener('loadstop', function do_loadstop(e) {
+			// For devices :
+			if (win.executeScript) {
+				win.addEventListener('loadstop', function do_loadstop(e) {
+					self.lookForTokenInChildWindow(win, this);
+				});
 
-				var loop;
+				win.addEventListener('exit', function do_exit() { console.log('exit event happened from token code!'); });
+			} else 
+			// For browser window testing :
+			{	
+				alert('Need to get the auth token manully for this auth flow\n(from hidden field in popup)');
+				setTimeout( function() {
+					var token = prompt('Auth flow needs manual intervention in this browser.\n\nEnter the token:\n');
+					resolve(token);
+				}, 8000 );
+			}
 
-				// clean up the popup (and interval (set below)) after auth
-				function afterAuthFunc(values) {
-					var access_token = values[0];
-					if (access_token) {
-						callback(access_token);
-						clearInterval(loop);
-						win.close();
-					}
-				}
+		});
 
-				// keep checking the popup window until the access_token hidden field is set
-				loop = setInterval(function() {
-					// Execute JavaScript to check for the existence of a name in the
-					// child browser's localStorage.
-					win.executeScript(
-						{
-							code: "document.getElementById('access_token').value"
-						},
-						afterAuthFunc
-					);
-				}, 400);
-			
-			});
+	}
 
-			win.addEventListener('exit', function do_exit() { console.log('exit event happened from token code!'); });
+	lookForTokenInChildWindow(win, promise) {
+		var loop;
 
-		}.bind(this));
+		// clean up the popup (and interval (set below)) after auth
+		function afterAuthFunc(values) {
+			var access_token = values[0];
+			if (access_token) {
+				clearInterval(loop);
+				win.close();
+				promise.resolve(access_token);
+			}
+		}
 
+		// keep checking the popup window until the access_token hidden field is set
+		loop = setInterval(function() {
+
+			// Execute JavaScript to check for the existence of a name in the
+			// child browser's localStorage. 
+			win.executeScript(
+				{
+					code: "document.getElementById('access_token').value"
+				},
+				afterAuthFunc
+			);
+
+		}, 400);		
 	}
 
 }
