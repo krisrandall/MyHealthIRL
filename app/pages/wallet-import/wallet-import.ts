@@ -72,7 +72,9 @@ export class WalletImportPage {
 			// For devices :
 			if (win.executeScript) {
 				win.addEventListener('loadstop', function do_loadstop(e) {
-					self.lookForTokenInChildWindow(win, this);
+					self.lookForTokenInChildWindow(win, function(token) {
+						resolve(token)
+					});
 				});
 
 				win.addEventListener('exit', function do_exit() { console.log('exit event happened from token code!'); });
@@ -90,7 +92,7 @@ export class WalletImportPage {
 
 	}
 
-	lookForTokenInChildWindow(win, promise) {
+	lookForTokenInChildWindow(win, callback) {
 		var loop;
 
 		// clean up the popup (and interval (set below)) after auth
@@ -99,7 +101,7 @@ export class WalletImportPage {
 			if (access_token) {
 				clearInterval(loop);
 				win.close();
-				promise.resolve(access_token);
+				callback(access_token);
 			}
 		}
 
