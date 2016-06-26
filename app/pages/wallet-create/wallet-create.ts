@@ -3,12 +3,7 @@ import {WalletHome} from '../wallet-home/wallet-home';
 import {WalletDetail} from '../wallet-detail/wallet-detail';
 
 
-
-// Bring in the 3rd party etherwallet Javascript library
-// From : https://github.com/ethereumjs/ethereumjs-wallet
-declare function require(path: string) : any;
-//require('../../lib/etherwallet/etherWalletWrapperBrowserified.js'); // defines window.ethUtil
-var etherWallet = require('../../lib/etherwallet/myetherwallet.js'); 
+declare var Wallet : any;
 
 
 @Page({

@@ -21,12 +21,17 @@
 
 				document.getElementById('access_token').value = getToken('access_token');
 
+				// display it for the in-browser version
+				document.getElementById('atd').innerHTML = getToken('access_token');
+
 			}
 
 		</script>
 	</head>
 	<body>
-		...
 		<input type="hidden" id="access_token"></input>
+		Connected to Dropbox ...<br/>
+		Obtained access token : <span id="atd"></span> ...<br/>
+		Returning to app ...
 	</body>
 </html>
