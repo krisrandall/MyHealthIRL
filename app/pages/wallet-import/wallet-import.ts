@@ -8,6 +8,8 @@ import {Http, Headers} from '@angular/http';
 })
 export class WalletImportPage {
 
+	private items = [];
+
 	/*
 
 	WIP Note :
@@ -69,7 +71,8 @@ export class WalletImportPage {
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Wallets'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Health Records'))
-		.then(()=>self.dropboxListFiles('/MyHealthIRL/Wallets'))
+		.then(()=>self.dropboxFetchFiles('/MyHealthIRL/Wallets'))
+		.then(self.listFiles.bind(this))
 		.catch((e)=>{
 
 			if (e=='reauth') {
@@ -80,6 +83,12 @@ export class WalletImportPage {
 
 		});
 
+	}
+
+	listFiles(fileList) {
+		console.log('here with ! : ', fileList);
+		var self = this;
+		fileList.forEach((fileRec)=>{ console.log('!!', fileRec); self.items.push(fileRec)});
 	}
 
 
@@ -126,7 +135,7 @@ export class WalletImportPage {
 	}
 
 
-	dropboxListFiles(path) {
+	dropboxFetchFiles(path) {
 
 		var self = this;
 
@@ -151,20 +160,17 @@ export class WalletImportPage {
 				"include_has_explicit_shared_members": true
 			});
 
+
+			/* 
+			TO DO - make recursive to get the full list of files if it is more 
+			than is returned by the first end point hit
+			*/
 			self.http
 			.post(listFilesUrl, data, { "headers": headers })
 			.toPromise()
-			.then((res) => { outputTheFiles(res.json()) })
+			.then((res) => { console.log('HERE!', res.json().entries); resolve(res.json().entries) })
 			.catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
 
-
-			function outputTheFiles(res) {
-
-				alert('now build a list !');
-				console.log(res);
-
-				resolve();
-			}
 
 		});
 

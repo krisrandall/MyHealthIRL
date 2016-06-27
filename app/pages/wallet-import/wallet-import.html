@@ -12,10 +12,19 @@
   
 
 	<ion-card>
-    	<ion-card-content>
-	    	You can import Wallets stored in the /MyHealthIRL/Wallets folder of your Dropbox account.
-    	</ion-card-content>
-  	</ion-card>
+  	<ion-card-content>
+    	You can import Wallets stored in the /MyHealthIRL/Wallets folder of your Dropbox account.
+  	</ion-card-content>
+  </ion-card>
+
+  <div *ngIf="!items.length<1">
+    <ion-card *ngFor="let item of items" (click)="alert(item)">
+      <ion-card-content>
+        {{item.name}}
+        ({{item.size}} )
+      </ion-card-content>
+    </ion-card>
+  </div>
 
 
 </ion-content>
