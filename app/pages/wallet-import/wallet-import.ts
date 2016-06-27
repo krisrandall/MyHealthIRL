@@ -30,7 +30,7 @@ export class WalletImportPage {
 			"base_url": "https://api.dropboxapi.com/2/files",
 			"endpoints" : {
 				"create_folder" : "/create_folder",		// https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
-				"list" : "/list_folder"
+				"list" : "/list_folder" // https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
 			}
 		}
 	}
@@ -50,37 +50,33 @@ export class WalletImportPage {
 					-HealthRecords
 		*/
 
+
+		/* 
+		TO DO :
+		(1) implement the file list as an li list
+		(2) allow click on a wallet to import it into the app
+
+		(3) save the token in the DB 
+		(4) check for token here and if we have it then just do listFiles
+		(5) if listFiles returns a 401 then we should re-request the token
+
+		(6) implement "pagination on /list_folder" (ie. end point /list_folder/continue etc )
+		    https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
+
+		*/
 		this.clearCache()
 		.then(self.dropboxGetToken.bind(this))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Wallets'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Health Records'))
-		.then(()=>self.dropboxListFiles('Wallets'));
+		.then(()=>self.dropboxListFiles('/MyHealthIRL/Wallets'))
+		.catch((e)=>{
 
-	}
-
-
-
-	dropboxCreateFolder(path : string) {
-
-		var self = this;
-
-		return new Promise(function(resolve, reject) {
-
-			var apiCreateFolder = self.filesSource.dropbox.base_url +
-								  self.filesSource.dropbox.endpoints.create_folder;
-
-			var headers = new Headers();
-			headers.append('Content-Type', 'application/json');
-			headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
-
-			var body : string = JSON.stringify({ "path" : path });
-
-			self.http
-			.post(apiCreateFolder, body, { "headers": headers })
-			.toPromise()
-			.then((res) => { resolve(res.json()); })
-			.catch((e) => { if (e.status===409) { resolve('already exists'); } else { console.error(e); alert(e._body)} });
+			if (e=='reauth') {
+				alert('TO DO : MUST REAUTH FOR NEW TOKEN!');
+			} else {
+				alert('Dropbox Error\n'+e);
+			}
 
 		});
 
@@ -102,6 +98,32 @@ export class WalletImportPage {
 			}
 		});
 	}
+	
+
+	dropboxCreateFolder(path : string) {
+
+		var self = this;
+
+		return new Promise(function(resolve, reject) {
+
+			var apiCreateFolder = self.filesSource.dropbox.base_url +
+								  self.filesSource.dropbox.endpoints.create_folder;
+
+			var headers = new Headers();
+			headers.append('Content-Type', 'application/json');
+			headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
+
+			var body : string = JSON.stringify({ "path" : path });
+
+			self.http
+			.post(apiCreateFolder, body, { "headers": headers })
+			.toPromise()
+			.then((res) => { resolve(res.json()); })
+			.catch((e) => { if (e.status===409) { resolve('already exists'); } else { console.error(e); reject(e._body)} });
+
+		});
+
+	}
 
 
 	dropboxListFiles(path) {
@@ -109,15 +131,41 @@ export class WalletImportPage {
 		var self = this;
 
 		return new Promise(function(resolve, reject) {
-			if (path!=='Wallets'&&path!=='Health Records') {
+			if (path!=='/MyHealthIRL/Wallets'&&path!=='/MyHealthIRL/Health Records') {
 				reject('Attempt to browse non MyHealthIRL path');
 			}
 
-			var listFilesUrl = self.filesSource.dropbox.base_url+self.filesSource.dropbox.endpoints.list;
-		
-			alert('TO do : list files at :'+listFilesUrl);
 
-			resolve('found the files or whatever ... TO DO !!');
+			var listFilesUrl = self.filesSource.dropbox.base_url +
+								self.filesSource.dropbox.endpoints.list;
+
+			var headers = new Headers();
+			headers.append('Content-Type', 'application/json');
+			headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
+
+			var data : string = JSON.stringify({ 
+				"path" : path,
+				"recursive": false,
+				"include_media_info": true,
+				"include_deleted": false,
+				"include_has_explicit_shared_members": true
+			});
+
+			self.http
+			.post(listFilesUrl, data, { "headers": headers })
+			.toPromise()
+			.then((res) => { outputTheFiles(res.json()) })
+			.catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
+
+
+			function outputTheFiles(res) {
+
+				alert('now build a list !');
+				console.log(res);
+
+				resolve();
+			}
+
 		});
 
 	}
