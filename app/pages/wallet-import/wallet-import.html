@@ -21,7 +21,7 @@
     <ion-card *ngFor="let item of items" (click)="alert(item)">
       <ion-card-content>
         {{item.name}}
-        ({{item.size}} )
+        ({{humanReadableByteCount(item.size)}})
       </ion-card-content>
     </ion-card>
   </div>

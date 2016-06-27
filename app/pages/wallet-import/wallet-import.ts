@@ -85,10 +85,18 @@ export class WalletImportPage {
 
 	}
 
+	humanReadableByteCount(bytes) {
+	    var unit = 1024;
+	    if (bytes < unit) return bytes + " B";
+	    var exp = (Math.log(bytes) / Math.log(unit));
+	    var pre = ("KMGTPE").charAt(exp-1) + ("i");
+	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+
+
 	listFiles(fileList) {
-		console.log('here with ! : ', fileList);
 		var self = this;
-		fileList.forEach((fileRec)=>{ console.log('!!', fileRec); self.items.push(fileRec)});
+		fileList.forEach((fileRec)=>{ self.items.push(fileRec)});
 	}
 
 
@@ -168,7 +176,7 @@ export class WalletImportPage {
 			self.http
 			.post(listFilesUrl, data, { "headers": headers })
 			.toPromise()
-			.then((res) => { console.log('HERE!', res.json().entries); resolve(res.json().entries) })
+			.then((res) => { resolve(res.json().entries) })
 			.catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
 
 
