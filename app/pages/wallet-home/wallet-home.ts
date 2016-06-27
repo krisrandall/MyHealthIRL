@@ -17,7 +17,7 @@ export class WalletHome {
 
   constructor(private nav: NavController, private dataService: Data) {
 
-    this.dataService.getData().then((walletList) => {
+    this.dataService.getData('wallet').then((walletList) => {
 
       if (walletList){
         this.items = JSON.parse(walletList);
@@ -45,7 +45,7 @@ export class WalletHome {
   saveItem(item){
     item.miniIcon = this.getItemIcon(item);
     this.items.push(item);
-    this.dataService.save(this.items);
+    this.dataService.save('wallet', this.items);
   }
 
   viewItem(item) {

@@ -8,15 +8,15 @@ export class Data {
   private data;
  
   constructor(){
-    this.storage = new Storage(SqlStorage, {name:'wallets'});
+    this.storage = new Storage(SqlStorage, {name:'myhealthirldb'});
   }
  
-  getData() {
-    return this.storage.get('wallets');  
+  getData(which) {
+    return this.storage.get(which);  
   }
  
-  save(data){
+  save(which, data){
     let newData = JSON.stringify(data);
-    this.storage.set('wallets', newData);
+    this.storage.set(which, newData);
   }
 }

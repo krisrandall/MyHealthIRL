@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Http, Headers} from '@angular/http';
+import {Data} from '../../providers/data/data';
 
 
 @Component({
@@ -40,7 +41,7 @@ export class WalletImportPage {
 	private dropboxAuthToken;
 
 
-	constructor(public nav: NavController, private http: Http) {
+	constructor(public nav: NavController, private http: Http, private dataService: Data) {
 
 		var self = this;
 
@@ -55,35 +56,71 @@ export class WalletImportPage {
 
 		/* 
 		TO DO :
-		(1) implement the file list as an li list
-		(2) allow click on a wallet to import it into the app
 
-		(3) save the token in the DB 
-		(4) check for token here and if we have it then just do listFiles
-		(5) if listFiles returns a 401 then we should re-request the token
-
-		(6) implement "pagination on /list_folder" (ie. end point /list_folder/continue etc )
-		    https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
+		(1) allow click on a wallet to import it into the app
+		(2) detect if wallet is already imported !
 
 		*/
-		this.clearCache()
-		.then(self.dropboxGetToken.bind(this))
+
+		self.dataService.getData('dropboxAuthToken').then(function(token){
+
+			if (token==='null') token = null;
+			self.dropboxAuthToken = token.replace(/['"]+/g, ''); // strip quotes added by data store
+
+			if (self.dropboxAuthToken) {
+
+				self.clearCache()
+				.then(()=>self.dropboxFetchFiles('/MyHealthIRL/Wallets'))
+				.then(self.listFiles.bind(self))
+				.catch((e)=>{
+					if (e=='reauth') {
+						console.log('token expired, doing full init again ...');
+						self.doFullDropboxInit();
+					} else {
+						alert('Dropbox Error\n'+e);
+					}
+				});
+
+			} else {
+
+				self.doFullDropboxInit();
+
+			}
+					
+		});
+
+	
+
+	}
+
+
+	doFullDropboxInit() {
+
+		var self = this;
+		
+		// There could be much better seperation of logic in this - but this is what we get right now :
+
+		self.clearCache()
+		.then(self.dropboxGetToken.bind(self))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Wallets'))
 		.then(()=>self.dropboxCreateFolder('/MyHealthIRL/Health Records'))
 		.then(()=>self.dropboxFetchFiles('/MyHealthIRL/Wallets'))
-		.then(self.listFiles.bind(this))
+		.then(self.listFiles.bind(self))
 		.catch((e)=>{
 
 			if (e=='reauth') {
-				alert('TO DO : MUST REAUTH FOR NEW TOKEN!');
+				console.log('token expired, doing full init again ...');
+				self.doFullDropboxInit();
 			} else {
 				alert('Dropbox Error\n'+e);
 			}
 
 		});
-
+	
 	}
+
+
 
 	humanReadableByteCount(bytes) {
 	    var unit = 1024;
@@ -172,6 +209,7 @@ export class WalletImportPage {
 			/* 
 			TO DO - make recursive to get the full list of files if it is more 
 			than is returned by the first end point hit
+			https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
 			*/
 			self.http
 			.post(listFilesUrl, data, { "headers": headers })
@@ -201,6 +239,7 @@ export class WalletImportPage {
 			if (win.executeScript) {
 				win.addEventListener('loadstop', function do_loadstop(e) {
 					self.lookForTokenInChildWindow(win, function(token) {
+						self.dataService.save('dropboxAuthToken', token);
 						self.dropboxAuthToken = token;
 						resolve(token);
 					});
@@ -213,6 +252,7 @@ export class WalletImportPage {
 				// alert('Need to get the auth token manully for this auth flow\n(from hidden field in popup)');
 				setTimeout( function() {
 					var token = prompt('Auth flow needs manual intervention in this browser.\n\nEnter the token:\n');
+					self.dataService.save('dropboxAuthToken', token);
 					self.dropboxAuthToken = token;
 					resolve(token);
 				}, 8000 );
