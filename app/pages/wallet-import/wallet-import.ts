@@ -11,6 +11,7 @@ export class WalletImportPage {
 
 	private items = [];
 
+
 	/*
 
 	WIP Note :
@@ -24,17 +25,21 @@ export class WalletImportPage {
 	
 	private filesSource = {
 		// see : https://www.dropbox.com/developers/documentation/http/documentation
+		// and : https://www.dropbox.com/developers/apps/info/7o1hlldcmb28dk5
 		"dropbox": {
 			"auth" : {
 				"base_url": "https://www.dropbox.com/1/oauth2/authorize?response_type=token&state=whatever",
 				"client_id": "7o1hlldcmb28dk5",
 				"redirect_uri": "https://take5app.co/sicoor/dropbox.redirect_back_to_app.html"
 			},
-			"base_url": "https://api.dropboxapi.com/2/files",
+			"api_base_url": "https://api.dropboxapi.com/2/files",
+			"download_base_url": "https://content.dropboxapi.com/2/files",
 			"endpoints" : {
 				"create_folder" : "/create_folder",		// https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
-				"list" : "/list_folder" // https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
+				"list" : "/list_folder",				// https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
+				"download" : "/download"				// https://www.dropbox.com/developers/documentation/http/documentation#files-download
 			}
+			//"download_tunnel" : "https://take5app.co/sicoor/dropbox.file_download_tunnel.html"
 		}
 	}
 
@@ -65,9 +70,14 @@ export class WalletImportPage {
 		self.dataService.getData('dropboxAuthToken').then(function(token){
 
 			if (token==='null') token = null;
-			self.dropboxAuthToken = token.replace(/['"]+/g, ''); // strip quotes added by data store
+			self.dropboxAuthToken = token; 
 
 			if (self.dropboxAuthToken) {
+
+				console.log('HERE !!!!!!!!!!!!!');
+				console.log(self.dropboxAuthToken);
+
+				self.dropboxAuthToken = self.dropboxAuthToken.replace(/['"]+/g, ''); // strip quotes added by data store
 
 				self.clearCache()
 				.then(()=>self.dropboxFetchFiles('/MyHealthIRL/Wallets'))
@@ -122,21 +132,6 @@ export class WalletImportPage {
 
 
 
-	humanReadableByteCount(bytes) {
-	    var unit = 1024;
-	    if (bytes < unit) return bytes + " B";
-	    var exp = (Math.log(bytes) / Math.log(unit));
-	    var pre = ("KMGTPE").charAt(exp-1) + ("i");
-	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-	}
-
-
-	listFiles(fileList) {
-		var self = this;
-		fileList.forEach((fileRec)=>{ self.items.push(fileRec)});
-	}
-
-
 	// this wrapper function means it works in-device or in-browser (without the cache plugin)
 	clearCache() {
 		// need to clear cache here 'cause caching seems to be happening, use this plugin :
@@ -160,7 +155,7 @@ export class WalletImportPage {
 
 		return new Promise(function(resolve, reject) {
 
-			var apiCreateFolder = self.filesSource.dropbox.base_url +
+			var apiCreateFolder = self.filesSource.dropbox.api_base_url +
 								  self.filesSource.dropbox.endpoints.create_folder;
 
 			var headers = new Headers();
@@ -190,7 +185,7 @@ export class WalletImportPage {
 			}
 
 
-			var listFilesUrl = self.filesSource.dropbox.base_url +
+			var listFilesUrl = self.filesSource.dropbox.api_base_url +
 								self.filesSource.dropbox.endpoints.list;
 
 			var headers = new Headers();
@@ -288,6 +283,59 @@ export class WalletImportPage {
 			);
 
 		}, 400);		
+	}
+
+	dropboxDownloadFile(path) {
+		var self = this;
+
+		return new Promise(function(resolve, reject) {
+
+			var listFilesUrl = self.filesSource.dropbox.download_base_url +
+								self.filesSource.dropbox.endpoints.download;
+
+			var headers = new Headers();
+			headers.append('Content-Type', ' ');
+			headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
+			headers.append('Dropbox-API-Arg', '{"path": "'+path+'"}');
+
+			self.http
+			.post(listFilesUrl, "", { "headers": headers })
+			.toPromise()
+			.then((res) => { resolve(res.json()) })
+			.catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
+
+		});
+	}
+
+
+	/* These functions possibly belong here - not in the generic dropbox component */
+	listFiles(fileList) {
+		var self = this;
+		fileList.forEach((fileRec)=>{ self.items.push(fileRec)});
+	}
+	importWallet(walletFilePath) {
+
+		var self = this;
+
+		self.dropboxDownloadFile(walletFilePath)
+		.then((res) => { processWallet(res) })
+		.catch((e) => { if (e.status===401) { alert('Token expired, must reAuthenticate'); } else { console.error(e); } });
+
+		function processWallet(fileData) {
+			console.log('test!');
+			//alert('i got the dam file, wat now?');
+			console.log(fileData);	
+			// check if exists already and if it does then alert the user
+			// else import it like a normal wallet		
+		}
+
+	}
+	humanReadableByteCount(bytes) {
+	    var unit = 1024;
+	    if (bytes < unit) return bytes + " B";
+	    var exp = (Math.log(bytes) / Math.log(unit));
+	    var pre = ("KMGTPE").charAt(exp-1) + ("i");
+	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
 }
