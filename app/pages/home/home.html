@@ -6,15 +6,36 @@
 
 <ion-content class="home">
 
+	<img src="img/bannerlogo.png" id="bannerlogo"/>
+	
 	<ion-card>
     	<ion-card-content>
-			<h1 text-center>This app is a work in progress</h1>
+			MyHealthIRL lets you manage your personal health records
 		</ion-card-content>
 	</ion-card>
-	<ion-card>
+
+	<ion-card *ngIf="hasDropboxToken!=null">
     	<ion-card-content>
-				At this time you can <button (click)="showWalletHome()" secondary>Manage Wallets</button> 
+			<div *ngIf="!hasDropboxToken">
+				You must have a Dropbox account setup
+				<button (click)="dropboxSetup()" primary style="width: 100%;">Connect to Dropbox</button> 
+			</div>
+			<div *ngIf="hasDropboxToken">
+				<button (click)="showHealthHome()" primary style="width: 100%;">MyHealth Records</button> 
+			</div>
 		</ion-card-content>
 	</ion-card>
+
+
+	<ion-card *ngIf="hasSomeWallets!=null">
+    	<ion-card-content>
+    		<div *ngIf="!hasSomeWallets">
+				You must create or import an Ethereum Wallet
+			</div>
+			<button (click)="showWalletHome()" secondary style="width: 100%;">Manage Wallets</button> 
+		</ion-card-content>
+	</ion-card>
+
+
 	
 </ion-content>
