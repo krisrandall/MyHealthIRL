@@ -38,24 +38,6 @@ export class DropboxService {
   constructor(public http: Http,
               public dataService: Data)
   {
-  
-    var self = this;
-
-
-    // check if we have the token saved
-
-    self.dataService.getData('dropboxAuthToken').then(function(token){
-
-      if (token==='null') token = null;
-      self.dropboxAuthToken = token; 
-
-      if (self.dropboxAuthToken) {
-        // strip quotes added by data store
-        self.dropboxAuthToken = self.dropboxAuthToken.replace(/['"]+/g, ''); 
-      } 
-          
-    });
-
 
   }
  
@@ -76,35 +58,42 @@ export class DropboxService {
     return new Promise(function(resolve, reject) {
 
       // if we already have a token then we can just resolve (calling code must have a catch 'reauth')
+      self.dataService.getData('dropboxAuthToken').then(function(token){
 
-      if (self.dropboxAuthToken) {
+        if (token==='null') token = null;
+        self.dropboxAuthToken = token; 
 
-        resolve('already have token saved');
+        if (self.dropboxAuthToken) {
+          
+          self.dropboxAuthToken = self.dropboxAuthToken.replace(/['"]+/g, '');  // strip quotes added by data store
+          resolve('already have token saved');
 
-      } else {
+        } else {
 
-        self.clearCache()
-        .then(self.dropboxGetToken.bind(self))
-        .then(()=>self.dropboxCreateFolder('/MyHealthIRL'))
-        .then(()=>self.dropboxCreateFolder('/MyHealthIRL/Wallets'))
-        .then(()=>self.dropboxCreateFolder('/MyHealthIRL/Health Records'))
-        .then(resolve)
-        .catch((e)=>{
+          self.clearCache()
+          .then(self.dropboxGetToken.bind(self))
+          .then(()=>self.dropboxCreateFolder('/MyHealthIRL'))
+          .then(()=>self.dropboxCreateFolder('/MyHealthIRL/Wallets'))
+          .then(()=>self.dropboxCreateFolder('/MyHealthIRL/Health Records'))
+          .then(resolve)
+          .catch((e)=>{
 
-          if (e=='reauth') {
-            console.log('token expired, doing full init again ...');
-            self.doFullDropboxInit();
-          } else {
-            alert('Dropbox Error\n'+e);
-            reject(e);
-          }
+            if (e=='reauth') {
+              console.log('token expired, doing full init again ...');
+              self.doFullDropboxInit();
+            } else {
+              alert('Dropbox Error\n'+e);
+              reject(e);
+            }
 
-        });
-              
-      }
+          });
+                
+        }
 
-    });
+      });
   
+    });
+
   }
 
 
@@ -268,16 +257,16 @@ export class DropboxService {
 
     return new Promise(function(resolve, reject) {
 
-      var listFilesUrl = self.filesSource.dropbox.content.base_url +
+      var dlUrl = self.filesSource.dropbox.content.base_url +
                 self.filesSource.dropbox.content.endpoints.download;
 
       var headers = new Headers();
-      headers.append('Content-Type', ' ');
+      headers.append('Content-Type', ' '); // this must be a blank space (null or empty string sends 'text/plain' which dropbox rejects)
       headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
       headers.append('Dropbox-API-Arg', '{"path": "'+path+'"}');
 
       self.http
-      .post(listFilesUrl, "", { "headers": headers })
+      .post(dlUrl, "", { "headers": headers })
       .toPromise()
       .then((res) => { resolve(res) })
       .catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
@@ -290,21 +279,29 @@ export class DropboxService {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-/*
-      var listFilesUrl = self.filesSource.dropbox.content.base_url +
+
+      var uploadUrl = self.filesSource.dropbox.content.base_url +
                 self.filesSource.dropbox.content.endpoints.upload;
 
+      var params = {
+        "path": path+fileName,
+        "mode": "add",
+        "autorename": false,
+        "mute": false
+      }
+
       var headers = new Headers();
-      headers.append('Content-Type', ' ');
+      headers.append('Content-Type', 'application/octet-stream');
       headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
-      headers.append('Dropbox-API-Arg', '{"path": "'+path+'"}');
+      headers.append('Dropbox-API-Arg', JSON.stringify(params));
+
 
       self.http
-      .post(listFilesUrl, "", { "headers": headers })
+      .post(uploadUrl, fileDataBinary, { "headers": headers })
       .toPromise()
       .then((res) => { resolve(res) })
       .catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
-*/
+
     });
   }
 
