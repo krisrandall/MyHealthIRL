@@ -6,6 +6,10 @@ import {WalletHome} from '../wallet-home/wallet-home';
 import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
 
 
+declare module String{
+    export var format:any;
+}
+
 declare var Wallet : any;
 
 
@@ -42,8 +46,8 @@ export class WalletImportPage {
 
 
 	constructor(private navParams: NavParams, 
-				public nav: NavController,  
-				public dropbox: DropboxService) 
+				private nav: NavController,  
+				private dropbox: DropboxService) 
 	{
 
 		var self = this;

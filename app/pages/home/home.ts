@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
 import {NavController} from 'ionic-angular';
 import {WalletHome} from '../wallet-home/wallet-home';
+import {MyHealthHome} from '../health-record-home/health-record-home';
 import {Data} from '../../providers/data/data';
 import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
 
@@ -14,8 +15,8 @@ export class HomePage {
   private hasSomeWallets = null;
 
   constructor(private nav: NavController, 
-              public dataService: Data,  
-              public dropbox: DropboxService) 
+              private dataService: Data,  
+              private dropbox: DropboxService) 
   {
 
   }
@@ -40,8 +41,7 @@ export class HomePage {
   }
 
   showHealthtHome() {
-    alert('TO DO -- code the MyHealth Records page ');
-    //this.nav.push(WalletHome);
+    this.nav.push(MyHealthHome);
   }
 
 
