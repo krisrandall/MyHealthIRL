@@ -15,7 +15,7 @@
       <ion-card *ngFor="let item of items">
         <ion-card-content>
           {{item.name}}
-          ({{humanReadableByteCount(item.size)}})
+          <small>({{humanReadableByteCount(item.size)}})</small>
           <button (click)="importWallet(item.path_display)" secondary style="width: 100%;">Import Wallet</button> 
         </ion-card-content>
       </ion-card>

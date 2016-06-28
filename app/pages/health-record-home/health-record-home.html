@@ -18,9 +18,9 @@
 	<div *ngIf="!items.length<1">
 	  <ion-card *ngFor="let item of items">
 	    <ion-card-content>
-	    	SOME KIND OF ICON HERE !
-	      {{item.name}}
-	      ({{humanFileSize(item.size)}})
+	      <img src="img/icons/genericFile.png" class="fileThumb">
+	      {{item.name}} 
+	      <small>({{humanFileSize(item.size)}})</small>
 	      <button (click)="downloadHealthRecord(item.path_display)" secondary style="width: 100%;">View</button> 
 	    </ion-card-content>
 	  </ion-card>

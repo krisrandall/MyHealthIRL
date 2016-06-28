@@ -3,9 +3,6 @@ import {NavController} from 'ionic-angular';
 import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
 
 
-declare module String{
-    export var format:any;
-}
 
 @Component({
   templateUrl: 'build/pages/health-record-home/health-record-home.html',
