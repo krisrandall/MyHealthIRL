@@ -53,7 +53,7 @@ export class WalletHome {
   }
 
   showImportPage() {
-    this.nav.push(WalletImportPage, { });
+    this.nav.push(WalletImportPage, { walletHome: this } ); // it calls WalletHome.saveItem
   }
 
 }

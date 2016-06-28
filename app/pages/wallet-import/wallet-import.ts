@@ -1,7 +1,11 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {Http, Headers} from '@angular/http';
 import {Data} from '../../providers/data/data';
+import {WalletDetail} from '../wallet-detail/wallet-detail';
+import {WalletHome} from '../wallet-home/wallet-home';
+
+declare var Wallet : any;
 
 
 @Component({
@@ -10,7 +14,19 @@ import {Data} from '../../providers/data/data';
 export class WalletImportPage {
 
 	private items = [];
+	private state = '';
 
+	private walletHome;
+
+
+    getBlob(mime, str) {
+        var str = (typeof str === 'object') ? JSON.stringify(str) : str;
+        if (str == null) return '';
+        var blob = new Blob([str], {
+            type: mime
+        });
+        return window.URL.createObjectURL(blob);        
+    }
 
 	/*
 
@@ -46,9 +62,15 @@ export class WalletImportPage {
 	private dropboxAuthToken;
 
 
-	constructor(public nav: NavController, private http: Http, private dataService: Data) {
+	constructor(private navParams: NavParams, 
+				public nav: NavController, 
+				private http: Http, 
+				private dataService: Data) 
+	{
 
 		var self = this;
+
+		self.walletHome = self.navParams.get('walletHome');
 
 		// Auth Drobbox, and create necessary folder structure 
 		/* MyHealthIRL uses the following folder structure :
@@ -301,7 +323,7 @@ export class WalletImportPage {
 			self.http
 			.post(listFilesUrl, "", { "headers": headers })
 			.toPromise()
-			.then((res) => { resolve(res.json()) })
+			.then((res) => { resolve(res) })
 			.catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
 
 		});
@@ -322,11 +344,43 @@ export class WalletImportPage {
 		.catch((e) => { if (e.status===401) { alert('Token expired, must reAuthenticate'); } else { console.error(e); } });
 
 		function processWallet(fileData) {
-			console.log('test!');
-			//alert('i got the dam file, wat now?');
-			console.log(fileData);	
-			// check if exists already and if it does then alert the user
-			// else import it like a normal wallet		
+
+			var unlockPassword = prompt('Enter the password for this keystore');
+
+			// need to wrap inside of settimeout in order to force page refresh
+			self.state = 'checkingPassphrase';
+			setTimeout(function() {
+				
+				try {
+					var wallet = Wallet.getWalletFromPrivKeyFile(fileData._body, unlockPassword);				
+
+	            	let item = {
+		                wallet: wallet,
+		                address: wallet.getAddressString(),
+		                blob: self.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
+		                blobEnc: self.getBlob("text/json;charset=UTF-8", 
+		                            wallet.toV3(unlockPassword, {n: 1024})),
+		                walletV3: wallet.toV3(unlockPassword, {n: 1024}),
+		                createdOn: new Date(),
+		                encFileName: wallet.getV3Filename(new Date())
+		            };
+
+		            self.walletHome.saveItem(item);
+		            self.nav.pop();
+
+								console.log('test!');
+					//alert('i got the dam file, wat now?');
+					console.log(fileData);	
+					// check if exists already and if it does then alert the user
+					// else import it like a normal wallet	
+
+				} catch(e) {
+					alert(e.toString());
+					self.state = '';
+				}
+
+			}, 100);
+		
 		}
 
 	}

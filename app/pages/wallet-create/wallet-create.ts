@@ -22,7 +22,7 @@ export class WalletCreate {
 		this.walletHome = this.navParams.get('walletHome');
 	}
 
-    private getBlob(mime, str) {
+    getBlob(mime, str) {
         var str = (typeof str === 'object') ? JSON.stringify(str) : str;
         if (str == null) return '';
         var blob = new Blob([str], {
