@@ -96,9 +96,6 @@ export class WalletImportPage {
 
 			if (self.dropboxAuthToken) {
 
-				console.log('HERE !!!!!!!!!!!!!');
-				console.log(self.dropboxAuthToken);
-
 				self.dropboxAuthToken = self.dropboxAuthToken.replace(/['"]+/g, ''); // strip quotes added by data store
 
 				self.clearCache()
