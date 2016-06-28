@@ -38,9 +38,20 @@ export class WalletHome {
   }
 
 
-  addItem() {
-    this.nav.push(WalletCreate, { walletHome: this } ); // it calls WalletHome.saveItem
+  addNewWallet() {
+    this.nav.push(WalletCreate, { walletHome: this } ); // it calls WalletHome.saveItem 
   }
+
+  deleteItem(item) {
+
+    var index = this.items.indexOf(item);
+    if (index > -1) {
+        this.items.splice(index, 1);
+    }
+
+    this.dataService.save('wallet', this.items);
+  }
+
 
   saveItem(item){
     item.miniIcon = this.getItemIcon(item);
@@ -49,7 +60,7 @@ export class WalletHome {
   }
 
   viewItem(item) {
-    this.nav.push(WalletDetail, { item });
+    this.nav.push(WalletDetail, { item, walletHome: this }); // can call WalletHome.deleteItem
   }
 
   showImportPage() {
