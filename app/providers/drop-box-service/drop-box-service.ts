@@ -15,14 +15,20 @@ export class DropboxService {
         "client_id": "7o1hlldcmb28dk5",
         "redirect_uri": "https://take5app.co/sicoor/dropbox.redirect_back_to_app.html"
       },
-      "api_base_url": "https://api.dropboxapi.com/2/files",
-      "download_base_url": "https://content.dropboxapi.com/2/files",
-      "endpoints" : {
-        "create_folder" : "/create_folder",    // https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
-        "list" : "/list_folder",        // https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
-        "download" : "/download"        // https://www.dropbox.com/developers/documentation/http/documentation#files-download
+      "api" : {
+        "base_url": "https://api.dropboxapi.com/2/files",
+        "endpoints" : {
+          "create_folder" : "/create_folder",    // https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
+          "list" : "/list_folder"
+        }
+      },
+      "content" : {
+        "base_url": "https://content.dropboxapi.com/2/files",
+        "endpoints" : {
+          "download" : "/download",       // https://www.dropbox.com/developers/documentation/http/documentation#files-download
+          "upload" : "/upload"            // https://www.dropbox.com/developers/documentation/http/documentation#files-upload
+        }
       }
-      //"download_tunnel" : "https://take5app.co/sicoor/dropbox.file_download_tunnel.html"
     }
   }
 
@@ -126,8 +132,8 @@ export class DropboxService {
 
     return new Promise(function(resolve, reject) {
 
-      var apiCreateFolder = self.filesSource.dropbox.api_base_url +
-                  self.filesSource.dropbox.endpoints.create_folder;
+      var apiCreateFolder = self.filesSource.dropbox.api.base_url +
+                  self.filesSource.dropbox.api.endpoints.create_folder;
 
       var headers = new Headers();
       headers.append('Content-Type', 'application/json');
@@ -156,8 +162,8 @@ export class DropboxService {
       }
 
 
-      var listFilesUrl = self.filesSource.dropbox.api_base_url +
-                self.filesSource.dropbox.endpoints.list;
+      var listFilesUrl = self.filesSource.dropbox.api.base_url +
+                self.filesSource.dropbox.api.endpoints.list;
 
       var headers = new Headers();
       headers.append('Content-Type', 'application/json');
@@ -256,13 +262,14 @@ export class DropboxService {
     }, 400);    
   }
 
+
   dropboxDownloadFile(path) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
 
-      var listFilesUrl = self.filesSource.dropbox.download_base_url +
-                self.filesSource.dropbox.endpoints.download;
+      var listFilesUrl = self.filesSource.dropbox.content.base_url +
+                self.filesSource.dropbox.content.endpoints.download;
 
       var headers = new Headers();
       headers.append('Content-Type', ' ');
@@ -275,6 +282,29 @@ export class DropboxService {
       .then((res) => { resolve(res) })
       .catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
 
+    });
+  }
+
+
+  dropboxUploadFile(path, fileName, fileDataBinary) {
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+/*
+      var listFilesUrl = self.filesSource.dropbox.content.base_url +
+                self.filesSource.dropbox.content.endpoints.upload;
+
+      var headers = new Headers();
+      headers.append('Content-Type', ' ');
+      headers.append('Authorization', 'Bearer '+self.dropboxAuthToken);
+      headers.append('Dropbox-API-Arg', '{"path": "'+path+'"}');
+
+      self.http
+      .post(listFilesUrl, "", { "headers": headers })
+      .toPromise()
+      .then((res) => { resolve(res) })
+      .catch((e) => { if (e.status===401) { reject('reauth'); } else { console.error(e); reject(e._body)} });
+*/
     });
   }
 

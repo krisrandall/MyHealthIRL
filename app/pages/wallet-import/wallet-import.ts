@@ -17,7 +17,10 @@ export class WalletImportPage {
 	private items = [];
 	private state = '';
 
+	private walletDirectory = '/MyHealthIRL/Wallets';
+
 	private walletHome;
+
 
     getBlob(mime, str) {
         var str = (typeof str === 'object') ? JSON.stringify(str) : str;
@@ -56,7 +59,7 @@ export class WalletImportPage {
 		var self = this;
 
 		self.dropbox.doFullDropboxInit()
-		.then(()=>self.dropbox.dropboxFetchFiles('/MyHealthIRL/Wallets'))
+		.then(()=>self.dropbox.dropboxFetchFiles(self.walletDirectory))
 		.then(self.listFiles.bind(self))
 		.catch((e)=>{
 			if (e=='reauth') {

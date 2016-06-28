@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {NavParams} from 'ionic-angular';
-import {DomSanitizationService} from '@angular/platform-browser';
-
+import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
 
 @Component({
 	 templateUrl: 'build/pages/wallet-export/wallet-export.html',
@@ -9,25 +8,24 @@ import {DomSanitizationService} from '@angular/platform-browser';
 export class WalletExportPage {
 
 	private keyStoreFileContents;
-	private blobEnc;
-	private encFileName;
+	private fileName;
+	private walletDirectory = '/MyHealthIRL/Wallets';
 
+	constructor(private navParams: NavParams) {
 
-	sanitizedBlobEncUrl(){
-		// this seems stupid to me, but without it Angular2 adds "unsafe:" to my blob url
-		return this.sanitizer.bypassSecurityTrustUrl(this.blobEnc);
+		var self = this;
+
+		let walletItem = this.navParams.get('item');
+
+		self.keyStoreFileContents = JSON.stringify(walletItem.walletV3);
+		self.fileName = walletItem.encFileName;
+
 	}
 
-	constructor(private navParams: NavParams, private sanitizer:DomSanitizationService) {
-		let walletItem = this.navParams.get('item');
-		let keyStoreFileContents = JSON.stringify(walletItem.walletV3);
-		
-		console.log(walletItem);
+	
 
-				
-		this.keyStoreFileContents = keyStoreFileContents;
-		this.encFileName = walletItem.encFileName;
-		this.blobEnc = walletItem.blobEnc;
+	uploadWalletFile() {
+
 
 	}
 
