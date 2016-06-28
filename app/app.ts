@@ -3,7 +3,9 @@ import {Platform, ionicBootstrap} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {HomePage} from './pages/home/home';
 import {Data} from './providers/data/data';
- 
+import {DropboxService} from './providers/drop-box-service/drop-box-service';
+
+
 @Component({
   template: '<ion-nav [root]="rootPage"></ion-nav>'
 })
@@ -17,4 +19,4 @@ export class MyApp {
   }
 }
  
-ionicBootstrap(MyApp, [Data]);
+ionicBootstrap(MyApp, [Data, DropboxService]);
