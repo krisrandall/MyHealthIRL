@@ -347,39 +347,44 @@ export class WalletImportPage {
 
 			var unlockPassword = prompt('Enter the password for this keystore');
 
-			// need to wrap inside of settimeout in order to force page refresh
-			self.state = 'checkingPassphrase';
-			setTimeout(function() {
-				
-				try {
-					var wallet = Wallet.getWalletFromPrivKeyFile(fileData._body, unlockPassword);				
+			if (unlockPassword) {
 
-	            	let item = {
-		                wallet: wallet,
-		                address: wallet.getAddressString(),
-		                blob: self.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
-		                blobEnc: self.getBlob("text/json;charset=UTF-8", 
-		                            wallet.toV3(unlockPassword, {n: 1024})),
-		                walletV3: wallet.toV3(unlockPassword, {n: 1024}),
-		                createdOn: new Date(),
-		                encFileName: wallet.getV3Filename(new Date())
-		            };
+				// need to wrap inside of settimeout in order to force page refresh
+				self.state = 'checkingPassphrase';
+				setTimeout(function() {
+					
+					try {
+						var wallet = Wallet.getWalletFromPrivKeyFile(fileData._body, unlockPassword);				
 
-		            self.walletHome.saveItem(item);
-		            self.nav.pop();
+		            	let item = {
+			                wallet: wallet,
+			                address: wallet.getAddressString(),
+			                blob: self.getBlob("text/json;charset=UTF-8", wallet.toJSON()),
+			                blobEnc: self.getBlob("text/json;charset=UTF-8", 
+			                            wallet.toV3(unlockPassword, {n: 1024})),
+			                walletV3: wallet.toV3(unlockPassword, {n: 1024}),
+			                createdOn: new Date(),
+			                encFileName: wallet.getV3Filename(new Date())
+			            };
 
-								console.log('test!');
-					//alert('i got the dam file, wat now?');
-					console.log(fileData);	
-					// check if exists already and if it does then alert the user
-					// else import it like a normal wallet	
+			            self.walletHome.saveItem(item);
+			            self.nav.pop();
 
-				} catch(e) {
-					alert(e.toString());
-					self.state = '';
-				}
+									console.log('test!');
+						//alert('i got the dam file, wat now?');
+						console.log(fileData);	
+						// check if exists already and if it does then alert the user
+						// else import it like a normal wallet	
 
-			}, 100);
+					} catch(e) {
+						alert(e.toString());
+						self.state = '';
+					}
+
+				}, 100);
+
+			}
+	
 		
 		}
 
