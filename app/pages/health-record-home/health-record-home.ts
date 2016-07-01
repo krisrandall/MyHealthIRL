@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, NgZone} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
 import {HealthRecordView} from '../health-record-view/health-record-view';
@@ -15,7 +15,8 @@ export class MyHealthHome {
 	private wait_status = '';
 
 	constructor(public nav: NavController,
-				public dropbox: DropboxService) 
+				public dropbox: DropboxService,
+				private zone: NgZone) 
 	{
 
 		this.fetchHealthRecords();
@@ -42,20 +43,36 @@ export class MyHealthHome {
 	}
 
 
+	// need to use NgZone.run in order to have the template refresh when values change
+	setStatus(status) {
+
+		this.zone.run( ()=> this.wait_status = status );
+
+	}
+
 	fetchHealthRecords() {
 
 		var self = this;
 
+		self.items = [];
+
+		self.setStatus('Fetching MyHealth Records ...'); 
+
 		self.dropbox.doFullDropboxInit()
 		.then(()=>self.dropbox.dropboxFetchFiles(self.directory))
 		.then(self.listFiles.bind(self))
+		.then(function() { 
+			self.setStatus('');
+		})
 		.catch((e)=>{
 			if (e=='reauth') {
 				console.log('token expired, doing full init again ...');
-				self.dropbox.doFullDropboxInit().then(self.fetchHealthRecords.bind(self));
+				self.dropbox.doFullDropboxInit()
+				.then(self.fetchHealthRecords.bind(self));
 			} else {
 				alert('Dropbox Error\n'+e);
 				console.log(e);
+				self.setStatus('');
 			}
 		});
 
@@ -74,14 +91,14 @@ export class MyHealthHome {
 		*/
 		var self = this;
 
-		self.wait_status = "Uploading file ...";
+		self.setStatus('Uploading file ...');
 
 
         var options = {
             destinationType: navigator.camera.DestinationType.DATA_URL,
             sourceType: navigator.camera.PictureSourceType.CAMERA,
             encodingType: navigator.camera.EncodingType.JPEG,
-            quality:100,
+            quality:50, /* < 100 quality for faster up and downloads */
             allowEdit: false,
             saveToPhotoAlbum: false
         };
@@ -97,13 +114,19 @@ export class MyHealthHome {
 
 	    		self.dropbox.dropboxUploadFile(self.directory, fileName, imgdata)
 	    		.then(function() {
-	    			self.wait_status = ''; 
-	    			alert('the upload is done');
-	    		});    			
+
+	    			self.setStatus('Wait for Dropbox ...');
+	    			setTimeout( function() {
+	    				self.fetchHealthRecords.bind(self)();
+	    			}, 2000); // give Dropbox a couple of seconds to refresh its index
+
+	    		});
+		
     		}
 
         }, (error) => {
             alert(error);
+            self.setStatus('');
         }, options);
 
 
@@ -115,9 +138,15 @@ export class MyHealthHome {
 
 		var self = this;
 
+		self.setStatus('Downloading file ...');
+
 		self.dropbox.dropboxDownloadFile(filePath).then(function(imgRec) {
+			
 			let imgData = imgRec._body;
-			self.nav.push( HealthRecordView, { "imgData" : imgData } );
+			self.nav.push( HealthRecordView, { "fileName": filePath, "imgData" : imgData } );
+
+			self.setStatus('');
+
 		});
 		
 

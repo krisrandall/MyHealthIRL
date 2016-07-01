@@ -36,6 +36,9 @@
         },
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        },
+        "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
         }
     },
     "dependent_plugins": {
