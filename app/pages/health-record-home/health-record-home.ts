@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {DropboxService} from '../../providers/drop-box-service/drop-box-service';
+import {HealthRecordView} from '../health-record-view/health-record-view';
 
 
 
@@ -11,7 +12,7 @@ export class MyHealthHome {
 	
 	private directory = '/MyHealthIRL/Health Records';
 	private items = [];
-
+	private wait_status = '';
 
 	constructor(public nav: NavController,
 				public dropbox: DropboxService) 
@@ -62,17 +63,64 @@ export class MyHealthHome {
 
 	listFiles(fileList) {
 		var self = this;
-		fileList.forEach((fileRec)=>{ self.items.push(fileRec); console.log(fileRec);} );
+		fileList.forEach( (fileRec)=>self.items.push(fileRec) );
 	}
 
 
 	addNewHealthRecord() {
-		alert('lets do this!!');
+		/* 
+		for now what this does is let the user take a picture,
+		enter a name for the "record" and then upload it to dropbox
+		*/
+		var self = this;
+
+		self.wait_status = "Uploading file ...";
+
+
+        var options = {
+            destinationType: navigator.camera.DestinationType.DATA_URL,
+            sourceType: navigator.camera.PictureSourceType.CAMERA,
+            encodingType: navigator.camera.EncodingType.JPEG,
+            quality:100,
+            allowEdit: false,
+            saveToPhotoAlbum: false
+        };
+        
+        navigator.camera.getPicture((data) => {
+
+            var imgdata = "data:image/jpeg;base64," + data;
+
+    		var fileName = prompt('Enter a name for this file');
+    		if (fileName) {
+
+	    		fileName = "/"+fileName.replace(/[^a-z0-9]/gi, ' ')+".healthRecord";
+
+	    		self.dropbox.dropboxUploadFile(self.directory, fileName, imgdata)
+	    		.then(function() {
+	    			self.wait_status = ''; 
+	    			alert('the upload is done');
+	    		});    			
+    		}
+
+        }, (error) => {
+            alert(error);
+        }, options);
+
+
+
 	}
 
-	downloadHealthRecord(item) {
-		console.log(item);
-		alert('lets do this -download the file !');
+
+	downloadHealthRecord(filePath) {
+
+		var self = this;
+
+		self.dropbox.dropboxDownloadFile(filePath).then(function(imgRec) {
+			let imgData = imgRec._body;
+			self.nav.push( HealthRecordView, { "imgData" : imgData } );
+		});
+		
+
 	}
 
 

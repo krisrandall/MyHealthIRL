@@ -30,7 +30,17 @@
         },
         "at.modalog.cordova.plugin.cache": {
             "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.ionicframework.myhealthirl750712"
+        }
+    }
 }

@@ -15,24 +15,35 @@
 
 <ion-content padding class="health-record-home">
   
-	<div *ngIf="!items.length<1">
-	  <ion-card *ngFor="let item of items">
-	    <ion-card-content>
-	      <img src="img/icons/genericFile.png" class="fileThumb">
-	      {{item.name}} 
-	      <small>({{humanFileSize(item.size)}})</small>
-	      <button (click)="downloadHealthRecord(item.path_display)" secondary style="width: 100%;">View</button> 
-	    </ion-card-content>
-	  </ion-card>
-	</div>
-	<div *ngIf="items.length<1">
+  	<div *ngIf="wait_status!=''">
 	  <ion-card>
 	    <ion-card-content>
-	      To add a MyHealth Personal Health Record, use the "Add" button<br/><br/>
-	      The files will be storred in the "/MyHealthIRL/Health Records" folder of your Dropbox account
+	      <ion-spinner></ion-spinner> {{wait_status}}
 	    </ion-card-content>
-	  </ion-card>    
+	  </ion-card>  
+  	</div>
+
+  	<div *ngIf="wait_status==''">
+		<div *ngIf="!items.length<1">
+		  <ion-card *ngFor="let item of items">
+		    <ion-card-content>
+		      <img src="img/icons/genericFile.png" class="fileThumb">
+		      {{item.name}} 
+		      <small>({{humanFileSize(item.size)}})</small>
+		      <button (click)="downloadHealthRecord(item.path_display)" secondary style="width: 100%;">View</button> 
+		    </ion-card-content>
+		  </ion-card>
+		</div>
+		<div *ngIf="items.length<1">
+		  <ion-card>
+		    <ion-card-content>
+		      To add a MyHealth Personal Health Record, use the "Add" button<br/><br/>
+		      The files will be storred in the "/MyHealthIRL/Health Records" folder of your Dropbox account
+		    </ion-card-content>
+		  </ion-card>    
+		</div>
 	</div>
+
 
 
 </ion-content>
